@@ -1,6 +1,6 @@
 enum EntityType { PLATFORM, PLAYER, ENEMY   };
-enum AIType     { WALKER, GUARD             };
-enum AIState    { WALKING, IDLE, ATTACKING  };
+enum AIType     { WALKER, GUARD, PATROL, JUMPER };
+enum AIState    { ACTIVE, IDLE, ATTACKING  };
 
 #ifndef Entity_hpp
 #define Entity_hpp
@@ -46,6 +46,7 @@ public:
     float width = 1;
     float height = 1;
     float speed;
+    bool forward;
     bool jump = false;
     float jump_power = 0;
     GLuint textureID;
@@ -63,7 +64,7 @@ public:
     void check_collisions_y(Entity *objects, int objectCount);
     void check_collisions_x(Entity *objects, int objectCount);
     void check_collisions_enemy(Entity *enemies, int enemy_count);
-    void update(float deltaTime, Entity *platforms, int platformCount);
+    void update(float deltaTime, Entity *player, Entity *platforms, int platformCount, Entity *enemies, int enemyCount);
     void render(ShaderProgram *program);
     void draw_sprite_from_texture_atlas(ShaderProgram* program, GLuint texture_id, int index);
     void ai_activate(Entity *player);

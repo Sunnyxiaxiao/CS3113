@@ -19,7 +19,7 @@ Entity::Entity()
     velocity = glm::vec3(0);
     speed = 0;
     forward = true;
-    
+    collidedBottom = true;
     g_model_matrix = glm::mat4(1.0f);
 }
 
@@ -89,7 +89,7 @@ void Entity::check_collisions_x(Entity *objects, int objectCount)
     }
 }
 
-void Entity::check_collision_enemy(Entity *enemies, int enemy_count) {
+void Entity::check_collisions_enemy(Entity *enemies, int enemy_count) {
     for (int i = 0; i < enemy_count; i++) {
         Entity *enemy = &enemies[i];
         
@@ -102,6 +102,7 @@ void Entity::check_collision_enemy(Entity *enemies, int enemy_count) {
             }
             else {
                 defeated = true;
+                std::cout << "Player fails by colliding to an enemy" << std::endl;
             }
         }
     }
@@ -121,7 +122,7 @@ void Entity::ai_activate(Entity *player) {
             ai_patrol();
             break;
             
-        case JUMP:
+        case JUMPER:
             ai_jump(player);
             break;
             
@@ -136,24 +137,23 @@ void Entity::ai_guard(Entity* player)
 {
     switch (ai_state) {
     case IDLE:
-        if (glm::distance(m_position, player->get_position()) < 3.0f) ai_state = ACTIVE;
+        if (glm::distance(position, player->get_position()) < 2.0f) ai_state = ACTIVE;
         break;
-
     case ACTIVE:
-        if (glm::distance(position, player->position) > 3.5f) {
-            aiState = IDLE;
+        if (glm::distance(position, player->position) >= 2.0f) {
+            ai_state = IDLE;
+            movement = glm::vec3(0.0f, 0.0f, 0.0f);
+            std::cout << ai_state << std::endl;
         }
-        if (m_position.x > player->get_position().x) {
-            m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
+        else if (position.x > player->get_position().x) {
+            movement = glm::vec3(-1.0f, 0.0f, 0.0f);
         }
         else {
-            m_movement = glm::vec3(1.0f, 0.0f, 0.0f);
+            movement = glm::vec3(1.0f, 0.0f, 0.0f);
         }
         break;
-
     case ATTACKING:
         break;
-
     default:
         break;
     }
@@ -163,15 +163,18 @@ void Entity::ai_patrol() {
     switch(ai_state) {
         case IDLE:
             break;
-            
         case ACTIVE:
-            if (forward && position.x <= 0.5f) {
+            std::cout << "dposition.x: " << position.x << std::endl;
+            if (forward && position.x <= 1.5f) {
                 movement = glm::vec3(1.0f, 0.0f, 0.0f);
-                if (position == 0.5f) forward = !forward;
+                if (position.x == 1.5f) {
+                    forward = !forward;
+                    std::cout << forward << std::endl;
+                }
             }
-            else if (!forward && position.x > 0.5f){
+            else if (!forward){
                 movement = glm::vec3(-1.0f, 0.0f, 0.0f);
-                if (position < -4.5f) foward = !forward;
+                if (position.x <= -2.0f) forward = !forward;
             }
             break;
     }
@@ -180,7 +183,6 @@ void Entity::ai_patrol() {
 void Entity::ai_jump(Entity *player) {
     switch(ai_state) {
         case IDLE:
-            std::cout << ai_state << "\n";
             if (glm::distance(position, player->position) < 1.5f) {
                 ai_state = ACTIVE;
             }
@@ -188,15 +190,11 @@ void Entity::ai_jump(Entity *player) {
                 velocity.y = -4.75;
             }
             break;
-            
         case ACTIVE:
-            std::cout << ai_state << "\n";
             velocity.y = 4.0;
-            
-            if (glm::distance(position, player->position) > 1.5f) {
+            if (glm::distance(position, player->position) >= 1.5f) {
                 ai_state = IDLE;
             }
-            
             break;
     }
 }
@@ -215,10 +213,9 @@ void Entity::update(float delta_time, Entity *player, Entity *platforms, int pla
     collidedBottom = false;
     collidedLeft = false;
     collidedRight = false;
-    collidedSafe = false;
     
     if (entity_type == ENEMY) ai_activate(player);
-    else check_collision_enemy(enemies, eneymy_count);
+    else check_collisions_enemy(enemies, enemy_count);
     
     if (jump) {
         jump = false;
@@ -233,6 +230,13 @@ void Entity::update(float delta_time, Entity *player, Entity *platforms, int pla
 
     position.x += velocity.x * delta_time;           // Move on X
     check_collisions_x(platforms, platform_count);     // Fix if needed
+    
+    if (position.x < -4.5f) {
+        position.x = -4.5f;
+    }
+    if (position.x > 4.5f) position.x = 4.5f;
+    if (position.y < -3.25f) position.y = -3.25f;
+    if (position.y > 3.25f) position.y = 3.25f;
     
     g_model_matrix = glm::mat4(1.0f);
     g_model_matrix = glm::translate(g_model_matrix, position);
