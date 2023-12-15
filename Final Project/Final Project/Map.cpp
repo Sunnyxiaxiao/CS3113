@@ -52,12 +52,6 @@ void Map::build()
                 x_offset + (m_tile_size * x) + m_tile_size - m_width / 2 + m_tile_size / 2, y_offset + (-m_tile_size * y) - m_tile_size + m_height / 2 - m_tile_size / 2,
                 x_offset + (m_tile_size * x) + m_tile_size - m_width / 2 + m_tile_size / 2, y_offset +  -m_tile_size * y + m_height / 2 - m_tile_size / 2
             });
-//            x_offset + (m_tile_size * x) - m_width / 2 + m_tile_size / 2,  y_offset +  -m_tile_size * y + m_height / 2  - m_tile_size / 2,
-//            x_offset + (m_tile_size * x) - m_width / 2  + m_tile_size / 2,  y_offset + (-m_tile_size * y) - m_tile_size + m_height / 2  - m_tile_size / 2,
-//            x_offset + (m_tile_size * x) + m_tile_size - m_width / 2 + m_tile_size / 2, y_offset + (-m_tile_size * y) - m_tile_size + m_height / 2 - m_tile_size / 2,
-//            x_offset + (m_tile_size * x) - m_width / 2 + m_tile_size / 2, y_offset + -m_tile_size * y + m_height / 2 - m_tile_size / 2,
-//            x_offset + (m_tile_size * x) + m_tile_size - m_width / 2 + m_tile_size / 2, y_offset + (-m_tile_size * y) - m_tile_size + m_height / 2 - m_tile_size / 2,
-//            x_offset + (m_tile_size * x) + m_tile_size - m_width / 2 + m_tile_size / 2, y_offset +  -m_tile_size * y + m_height / 2 - m_tile_size / 2
             this->m_texture_coordinates.insert(m_texture_coordinates.end(), {
                 u, v,
                 u, v + (tile_height),
@@ -69,10 +63,6 @@ void Map::build()
         }
     }
     
-//    this->m_left_bound   = 0 - (m_tile_size / 2);
-//    this->m_right_bound  = (m_tile_size * m_width) - (m_tile_size / 2);
-//    this->m_top_bound    = 0 + (m_tile_size / 2);
-//    this->m_bottom_bound = -(m_tile_size * m_height) + (m_tile_size / 2);
     m_left_bound   = -m_tile_size*m_width/2;
     m_right_bound  = m_tile_size*m_width/2;
     m_top_bound    = m_tile_size*m_height/2;
@@ -80,10 +70,6 @@ void Map::build()
     cout << "tile_size: " << m_tile_size << endl;
     cout << "width: " << m_width << " height: " << m_height << endl;
     cout << "bound: " << m_left_bound << " " << m_right_bound << " " << m_top_bound << " " << m_bottom_bound << endl;
-//    m_left_bound   = -15.8f;
-//    m_right_bound  = 15.8f;
-//    m_top_bound    = 16.2f;
-//    m_bottom_bound = -15.5f;
 }
 
 void Map::render(ShaderProgram* program)
@@ -105,66 +91,8 @@ void Map::render(ShaderProgram* program)
     glDisableVertexAttribArray(program->get_position_attribute());
 }
 
-//bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_y)
-//{
-//    *penetration_x = 0;
-//    *penetration_y = 0;
-//    
-//    if (position.x < m_left_bound || position.x > m_right_bound)  return false;
-//    if (position.y > m_top_bound || position.y  < m_bottom_bound) return false;
-//    
-//    int tile_x = floor((position.x + (m_tile_size / 2)) /  m_tile_size);
-//    int tile_y = -(ceil(position.y - (m_tile_size / 2))) / m_tile_size; // Our array counts up as Y goes down.
-//    
-//    if (tile_x < 0 || tile_x >= m_width) return false;
-//    if (tile_y < 0 || tile_y >= m_height) return false;
-//    
-//    int tile = m_level_data[tile_y * m_width + tile_x];
-//    if (tile == 0) return false;
-//    
-//    float tile_center_x =  (tile_x * m_tile_size);
-//    float tile_center_y = -(tile_y * m_tile_size);
-//    
-//    *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
-//    *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
-//    
-//    return true;
-//}
-
 bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_y)
 {
-//    // The penetration between the map and the object
-//    // The reason why these are pointers is because we want to reassign values
-//    // to them in case that we are colliding. That way the object that originally
-//    // passed them as values will keep track of these distances
-//    // inb4: we're passing by reference
-//    *penetration_x = 0;
-//    *penetration_y = 0;
-//
-//    // If we are out of bounds, it is not solid
-////    if (position.x < m_left_bound || position.x > m_right_bound)  return false;
-////    if (position.y > m_top_bound  || position.y < m_bottom_bound) return false;
-//
-//    int tile_x = floor((position.x + (m_tile_size / 2))  / m_tile_size);
-//    int tile_y = -(ceil(position.y - (m_tile_size / 2))) / m_tile_size; // Our array counts up as Y goes down.
-//
-//    // If the tile index is negative or greater than the dimensions, it is not solid
-//    if (tile_x < 0 || tile_x >= m_width)  return false;
-//    if (tile_y < 0 || tile_y >= m_height) return false;
-//
-//    // If the tile index is 0 i.e. an open space, it is not solid
-//    int tile = m_level_data[tile_y * m_width + tile_x];
-//    if (tile == 0) return false;
-//
-//    // And we likely have some overlap
-//    float tile_center_x = (tile_x  * m_tile_size);
-//    float tile_center_y = -(tile_y * m_tile_size);
-//
-//    // And because we likely have some overlap, we adjust for that
-//    *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
-//    *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
-//
-//    return true;
     *penetration_x = 0;
     *penetration_y = 0;
 
@@ -172,29 +100,10 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
     int tile_y = 0;
 
     tile_x = floor((((int(floor(position.x))+int(floor(m_width/2))) % m_width)));
-//    if(position.x < 0){
-//        tile_x = floor((((int(floor(position.x))+24) % 48)));
-//    }
-//    else{
-//        tile_x = floor((((int(floor(position.x))+48) % 48)) / 4) + 16;
-//    }
-//    if(position.y > 0){
-//        tile_y = fabs(24-(int(ceil(position.y))));
-//    }
-//    else{
-//        tile_y = fabs(((int(ceil(position.y))))) + 24;
-//    }
     tile_y = m_height/2 - ceil(position.y);
     
     int tile = m_level_data[(tile_y) * m_height + tile_x];
-//    cout << "tile: " << tile << endl;
-//    std::cout << "position_x: " << position.x << "tile_x: " << tile_x <<std::endl;
-//    std::cout << "position_y: " << position.y << "tile_y: " << tile_y <<std::endl;
-//    std::cout << "tile: " << tile_y * 48 + tile_x << "data: " << tile << std::endl;
-    // If we are out of bounds, it is not solid
-//    if (position.x < -62 || position.x > 62)  return false;
-//    if (position.y > 26  || position.y < -26) return false;
-    
+
     if (tile != 0) return true;
 
     return false;
