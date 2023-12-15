@@ -11,6 +11,8 @@
 #include "Entity.hpp"
 #include <vector>
 
+using namespace std;
+
 Entity::Entity()
 {
     position = glm::vec3(0);
@@ -94,6 +96,7 @@ void Entity::check_collisions_enemy(Entity *enemies, int enemy_count) {
         Entity *enemy = &enemies[i];
         
         if (check_collision(enemy)) {
+            cout << "difference: " << fabs(position.y - enemy->position.y) - ((height + enemy->height) / 2.0) << endl;
             if (velocity.y < 0) {
                 if (enemy->position.y <= position.y) {
                     enemy->defeated = true;

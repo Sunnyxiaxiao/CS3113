@@ -52,7 +52,7 @@ const float BG_RED = 0.1922f,
             BG_GREEN = 0.9059f,
             BG_OPACITY = 1.0f;
 
-const char V_SHADER_PATH[] = "/Users/zouyurou/Desktop/CS3113/HW5/HW5/shaders/vertex_textured.glsl", F_SHADER_PATH[] = "/Users/zouyurou/Desktop/CS3113/HW5/HW5/shaders/fragment_textured.glsl";
+const char V_SHADER_PATH[] = "/Users/zouyurou/Desktop/CS3113/SDL_HW5/SDL_HW5/shaders/vertex_textured.glsl", F_SHADER_PATH[] = "/Users/zouyurou/Desktop/CS3113/SDL_HW5/SDL_HW5/shaders/fragment_textured.glsl";
 
 Scene*  g_current_scene;
 Menu*   g_menu;
